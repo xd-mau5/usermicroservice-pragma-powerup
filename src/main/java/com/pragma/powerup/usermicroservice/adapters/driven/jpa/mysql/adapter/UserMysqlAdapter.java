@@ -17,9 +17,11 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static com.pragma.powerup.usermicroservice.configuration.Constants.CLIENT_ROLE_ID;
-import static com.pragma.powerup.usermicroservice.configuration.Constants.EMPLOYEE_ROLE_ID;
+import static com.pragma.powerup.usermicroservice.configuration.Constants.ADMIN_ROLE_ID;
+import static com.pragma.powerup.usermicroservice.configuration.Constants.OWNER_ROLE_ID;
 import static com.pragma.powerup.usermicroservice.configuration.Constants.MAX_PAGE_SIZE;
 import static com.pragma.powerup.usermicroservice.configuration.Constants.PROVIDER_ROLE_ID;
 
@@ -52,7 +54,17 @@ public class UserMysqlAdapter implements IUserPersistencePort {
         if (userRepository.findByPersonEntityIdAndRoleEntityId(user.getPerson().getId(), user.getRole().getId()).isPresent()) {
             throw new UserAlreadyExistsException();
         }
+        if (personRepository.findById(user.getPerson().getId()).get().getMail() == null || personRepository.findById(user.getPerson().getId()).get().getMail().isEmpty()) {
+            throw new MailNotValidException();
+        }
+        //TODO: Validar que el mail sea unico, arreglarlo
+        String regex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(user.getPerson().getMail());
         LocalDate currentDate = LocalDate.now();
+        if (!matcher.matches()) {
+            throw new MailNotValidException();
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate birthDate = LocalDate.parse(personRepository.findById(user.getPerson().getId()).get().getBirthDate(), formatter);
         Period period = Period.between(birthDate, currentDate);
@@ -93,13 +105,13 @@ public class UserMysqlAdapter implements IUserPersistencePort {
 
     @Override
     public User getEmployee(Long id) {
-        UserEntity userEntity = userRepository.findByPersonEntityIdAndRoleEntityId(id, EMPLOYEE_ROLE_ID).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity = userRepository.findByPersonEntityIdAndRoleEntityId(id, OWNER_ROLE_ID).orElseThrow(UserNotFoundException::new);
         return userEntityMapper.toUser(userEntity);
     }
 
     @Override
     public User getClient(Long id) {
-        UserEntity userEntity = userRepository.findByPersonEntityIdAndRoleEntityId(id, CLIENT_ROLE_ID).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity = userRepository.findByPersonEntityIdAndRoleEntityId(id, ADMIN_ROLE_ID).orElseThrow(UserNotFoundException::new);
         return userEntityMapper.toUser(userEntity);
     }
 }
