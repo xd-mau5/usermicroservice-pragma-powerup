@@ -82,9 +82,9 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, OWNER_ALREADY_EXISTS_MESSAGE));
     }
-    @ExceptionHandler(OwnerIsNotOver18.class)
+    @ExceptionHandler(OwnerIsNotOver18Exception.class)
     public ResponseEntity<Map<String, String>> handleOwnerIsNotOver18(
-            OwnerIsNotOver18 ownerIsNotOver18) {
+            OwnerIsNotOver18Exception ownerIsNotOver18) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, USER_IS_NOT_OVER_18_MESSAGE));
     }

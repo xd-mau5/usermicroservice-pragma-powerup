@@ -54,23 +54,24 @@ public class UserMysqlAdapter implements IUserPersistencePort {
         if (userRepository.findByPersonEntityIdAndRoleEntityId(user.getPerson().getId(), user.getRole().getId()).isPresent()) {
             throw new UserAlreadyExistsException();
         }
-        if (personRepository.findById(user.getPerson().getId()).get().getMail() == null || personRepository.findById(user.getPerson().getId()).get().getMail().isEmpty()) {
-            throw new MailNotValidException();
+        String email = String.valueOf(personRepository.findById(user.getPerson().getId()).get().getMail());
+        if (email == null) {
+            throw new MailIsNullException();
+        } else {
+            String regex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(email);
+            if (!matcher.matches()) {
+                throw new MailNotValidException();
+            }
         }
-        //TODO: Validar que el mail sea unico, arreglarlo
-        String regex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(user.getPerson().getMail());
         LocalDate currentDate = LocalDate.now();
-        if (!matcher.matches()) {
-            throw new MailNotValidException();
-        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate birthDate = LocalDate.parse(personRepository.findById(user.getPerson().getId()).get().getBirthDate(), formatter);
         Period period = Period.between(birthDate, currentDate);
         int age = period.getYears();
         if (age < 18) {
-            throw new OwnerIsNotOver18();
+            throw new OwnerIsNotOver18Exception();
         }
         personRepository.findById(user.getPerson().getId()).orElseThrow(PersonNotFoundException::new);
         roleRepository.findById(user.getRole().getId()).orElseThrow(RoleNotFoundException::new);
