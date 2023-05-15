@@ -88,6 +88,12 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, USER_IS_NOT_OVER_18_MESSAGE));
     }
+    @ExceptionHandler(MailNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleMailNotValidException(
+            MailNotValidException mailNotValidException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, MAIL_NOT_VALID_MESSAGE));
+    }
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleUserNotFoundException(
             UserNotFoundException userNotFoundException) {

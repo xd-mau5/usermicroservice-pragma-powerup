@@ -62,7 +62,6 @@ public class UserRestController {
                     @ApiResponse(responseCode = "422", description = "User is not over 18 years old",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping("/owner")
-    // TODO: Arreglar el codigo de error cuando el correo no es valido
     public ResponseEntity<Map<String, String>> saveOwner(@RequestBody UserRequestDto userRequestDto) {
         userHandler.saveOwner(userRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
