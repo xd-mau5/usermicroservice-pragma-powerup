@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
-    private final static Logger logger = LoggerFactory.getLogger(JwtProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
     @Value("${jwt.secret}")
     private String secret;
