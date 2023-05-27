@@ -11,4 +11,6 @@ public interface IPersonRepository extends JpaRepository<PersonEntity, Long> {
     Boolean existsByDniNumber(Long dniNumber);
 
     boolean existsByMail(String mail);
+
+    Optional<PersonEntity> findByMail(String mail);
 }
