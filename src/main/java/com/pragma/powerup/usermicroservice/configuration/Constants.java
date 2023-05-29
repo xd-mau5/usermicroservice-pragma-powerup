@@ -11,6 +11,8 @@ public class Constants {
     public static final Long PROVIDER_ROLE_ID = 3L;
     public static final Long USER_ROLE_ID = 4L;
     public static final int MAX_PAGE_SIZE = 2;
+    public static final String ROLE = "roles";
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
     public static final String RESPONSE_MESSAGE_KEY = "message";
     public static final String OWNER_CREATED_MESSAGE = "Owner created successfully";
     public static final String USER_IS_NOT_OVER_18_MESSAGE = "User is not over 18 years old";

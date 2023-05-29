@@ -6,6 +6,7 @@ import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.repositorie
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.repositories.IUserRepository;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.entity.UserEntity;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.mappers.IUserEntityMapper;
+import com.pragma.powerup.usermicroservice.domain.model.Role;
 import com.pragma.powerup.usermicroservice.domain.model.User;
 import com.pragma.powerup.usermicroservice.domain.spi.IUserPersistencePort;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +21,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.pragma.powerup.usermicroservice.configuration.Constants.ADMIN_ROLE_ID;
-import static com.pragma.powerup.usermicroservice.configuration.Constants.OWNER_ROLE_ID;
-import static com.pragma.powerup.usermicroservice.configuration.Constants.MAX_PAGE_SIZE;
-import static com.pragma.powerup.usermicroservice.configuration.Constants.PROVIDER_ROLE_ID;
+import static com.pragma.powerup.usermicroservice.configuration.Constants.*;
 
 @RequiredArgsConstructor
 @Transactional
@@ -46,14 +44,7 @@ public class UserMysqlAdapter implements IUserPersistencePort {
         userRepository.save(userEntityMapper.toEntity(user));
     }
     @Override
-    public void saveOwner(User user) {
-        if (user.getRole().getId().equals(PROVIDER_ROLE_ID))
-        {
-            throw new RoleNotAllowedForCreationException();
-        }
-        if (userRepository.findByPersonEntityIdAndRoleEntityId(user.getPerson().getId(), user.getRole().getId()).isPresent()) {
-            throw new UserAlreadyExistsException();
-        }
+    public void checkAge(User user){
         String email = String.valueOf(personRepository.findById(user.getPerson().getId()).get().getMail());
         if (email == null) {
             throw new MailIsNullException();
@@ -66,13 +57,28 @@ public class UserMysqlAdapter implements IUserPersistencePort {
             }
         }
         LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
         LocalDate birthDate = LocalDate.parse(personRepository.findById(user.getPerson().getId()).get().getBirthDate(), formatter);
         Period period = Period.between(birthDate, currentDate);
         int age = period.getYears();
         if (age < 18) {
             throw new OwnerIsNotOver18Exception();
         }
+    }
+    @Override
+    public void saveOwner(User user) {
+        if (user.getRole().getId().equals(PROVIDER_ROLE_ID))
+        {
+            throw new RoleNotAllowedForCreationException();
+        }
+        if (user.getRole().getId().equals(USER_ROLE_ID))
+        {
+            throw new RoleNotAllowedForCreationException();
+        }
+        if (userRepository.findByPersonEntityIdAndRoleEntityId(user.getPerson().getId(), user.getRole().getId()).isPresent()) {
+            throw new UserAlreadyExistsException();
+        }
+        checkAge(user);
         personRepository.findById(user.getPerson().getId()).orElseThrow(PersonNotFoundException::new);
         roleRepository.findById(user.getRole().getId()).orElseThrow(RoleNotFoundException::new);
         userRepository.save(userEntityMapper.toEntity(user));
