@@ -20,8 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.pragma.powerup.usermicroservice.configuration.Constants.EMPLOYEE_ROLE_ID;
-import static com.pragma.powerup.usermicroservice.configuration.Constants.OWNER_ROLE_ID;
+import static com.pragma.powerup.usermicroservice.configuration.Constants.*;
 
 @RestController
 @RequestMapping("/user")
@@ -80,6 +79,23 @@ public class UserRestController {
         userHandler.saveEmployee(userRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.EMPLOYEE_CREATED_MESSAGE));
+    }
+    @Operation(summary = "Create a client",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Client created",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
+                    @ApiResponse(responseCode = "409", description = "Client already exists",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error"))),
+                    @ApiResponse(responseCode = "403", description = "Role not allowed for client creation",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error"))),
+                    @ApiResponse(responseCode = "400", description = "User have a invalid mail",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
+    @PatchMapping("/client/{userId}")
+    public ResponseEntity<Map<String, String>> saveClient(@PathVariable Long userId) {
+        UserRequestDto userRequestDto = new UserRequestDto(userId, USER_ROLE_ID);
+                userHandler.saveClient(userRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.CLIENT_CREATED_MESSAGE));
     }
     @Operation(summary = "Delete an user",
             responses = {

@@ -88,6 +88,14 @@ public class UserMysqlAdapter implements IUserPersistencePort {
         roleRepository.findById(user.getRole().getId()).orElseThrow(RoleNotFoundException::new);
         userRepository.save(userEntityMapper.toEntity(user));
     }
+    @Override
+    public void saveClient(User user) {
+        isUserWithPersonAndRoleExists(user);
+        checkAge(user);
+        personRepository.findById(user.getPerson().getId()).orElseThrow(PersonNotFoundException::new);
+        roleRepository.findById(user.getRole().getId()).orElseThrow(RoleNotFoundException::new);
+        userRepository.save(userEntityMapper.toEntity(user));
+    }
 
     private void isUserWithPersonAndRoleExists(User user) {
         if (userRepository.findByPersonEntityIdAndRoleEntityId(user.getPerson().getId(), user.getRole().getId()).isPresent()) {
@@ -129,7 +137,7 @@ public class UserMysqlAdapter implements IUserPersistencePort {
 
     @Override
     public User getClient(Long id) {
-        UserEntity userEntity = userRepository.findByPersonEntityIdAndRoleEntityId(id, ADMIN_ROLE_ID).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity = userRepository.findByPersonEntityIdAndRoleEntityId(id, USER_ROLE_ID).orElseThrow(UserNotFoundException::new);
         return userEntityMapper.toUser(userEntity);
     }
 }

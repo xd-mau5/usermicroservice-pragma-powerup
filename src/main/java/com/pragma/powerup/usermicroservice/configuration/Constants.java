@@ -17,6 +17,7 @@ public class Constants {
     public static final String RESPONSE_MESSAGE_KEY = "message";
     public static final String OWNER_CREATED_MESSAGE = "Owner created successfully";
     public static final String EMPLOYEE_CREATED_MESSAGE = "Employee created successfully";
+    public static final String CLIENT_CREATED_MESSAGE = "Client created successfully";
 
     public static final String USER_IS_NOT_OVER_18_MESSAGE = "User is not over 18 years old";
     public static final String PERSON_CREATED_MESSAGE = "Person created successfully";

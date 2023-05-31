@@ -33,6 +33,10 @@ public class UserHandlerImpl implements IUserHandler {
         userServicePort.saveEmployee(userRequestMapper.toUser(userRequestDto));
     }
     @Override
+    public void saveClient(UserRequestDto userRequestDto) {
+        userServicePort.saveClient(userRequestMapper.toUser(userRequestDto));
+    }
+    @Override
     public void deleteUser(UserRequestDto userRequestDto) {
         userServicePort.deleteUser(userRequestMapper.toUser(userRequestDto));
     }

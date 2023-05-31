@@ -10,6 +10,7 @@ public interface IUserHandler {
     void deleteUser(UserRequestDto userRequestDto);
     void saveOwner(UserRequestDto userRequestDto);
     void saveEmployee(UserRequestDto userRequestDto);
+    void saveClient(UserRequestDto userRequestDto);
     List<PersonResponseDto> getProvider(Integer page);
     PersonResponseDto getProvider(Long id);
     PersonResponseDto getEmployee(Long id);
