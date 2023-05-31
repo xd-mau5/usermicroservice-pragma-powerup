@@ -9,6 +9,7 @@ public interface IUserHandler {
     void saveUser(UserRequestDto userRequestDto);
     void deleteUser(UserRequestDto userRequestDto);
     void saveOwner(UserRequestDto userRequestDto);
+    void saveEmployee(UserRequestDto userRequestDto);
     List<PersonResponseDto> getProvider(Integer page);
     PersonResponseDto getProvider(Long id);
     PersonResponseDto getEmployee(Long id);

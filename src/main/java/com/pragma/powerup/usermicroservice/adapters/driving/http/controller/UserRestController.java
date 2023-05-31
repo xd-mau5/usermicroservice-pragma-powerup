@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.pragma.powerup.usermicroservice.configuration.Constants.EMPLOYEE_ROLE_ID;
+import static com.pragma.powerup.usermicroservice.configuration.Constants.OWNER_ROLE_ID;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -56,10 +59,18 @@ public class UserRestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PatchMapping("/owner/{ownerId}")
     public ResponseEntity<Map<String, String>> saveOwner(@PathVariable Long ownerId) {
-        UserRequestDto userRequestDto = new UserRequestDto(ownerId, 2L);
+        UserRequestDto userRequestDto = new UserRequestDto(ownerId, OWNER_ROLE_ID);
         userHandler.saveOwner(userRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.OWNER_CREATED_MESSAGE));
+    }
+    @Operation
+    @PatchMapping("/employee/{userId}")
+    public ResponseEntity<Map<String, String>> saveEmployee(@PathVariable Long userId) {
+        UserRequestDto userRequestDto = new UserRequestDto(userId, EMPLOYEE_ROLE_ID);
+        userHandler.saveEmployee(userRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.EMPLOYEE_CREATED_MESSAGE));
     }
     @Operation(summary = "Delete an user",
             responses = {

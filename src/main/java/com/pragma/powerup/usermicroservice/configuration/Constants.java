@@ -2,19 +2,22 @@ package com.pragma.powerup.usermicroservice.configuration;
 
 public class Constants {
 
+
     private Constants() {
         throw new IllegalStateException("Utility class");
     }
 
     public static final Long ADMIN_ROLE_ID = 1L;
     public static final Long OWNER_ROLE_ID = 2L;
-    public static final Long PROVIDER_ROLE_ID = 3L;
+    public static final Long EMPLOYEE_ROLE_ID = 3L;
     public static final Long USER_ROLE_ID = 4L;
     public static final int MAX_PAGE_SIZE = 2;
     public static final String ROLE = "roles";
     public static final String DATE_FORMAT = "dd-MM-yyyy";
     public static final String RESPONSE_MESSAGE_KEY = "message";
     public static final String OWNER_CREATED_MESSAGE = "Owner created successfully";
+    public static final String EMPLOYEE_CREATED_MESSAGE = "Employee created successfully";
+
     public static final String USER_IS_NOT_OVER_18_MESSAGE = "User is not over 18 years old";
     public static final String PERSON_CREATED_MESSAGE = "Person created successfully";
     public static final String USER_CREATED_MESSAGE = "User created successfully";

@@ -50,6 +50,14 @@ class UserUseCaseTest {
 
         verify(userPersistencePort).saveOwner(user);
     }
+    @Test
+    void saveEmployee() {
+        User user = new User(1L, new Person(1L, "Omar", "Izquierdo", "prueba@prueba.co",
+                "+573126791586", "Calle 123", "1", 1234567890L,
+                "Test", "10-08-1998"), new Role(1L, "ROLE_ADMIN", "ROLE_ADMIN"));
+        userUseCase.saveEmployee(user);
+        verify(userPersistencePort).saveEmployee(user);
+    }
 
     @Test
     void deleteUser() {
