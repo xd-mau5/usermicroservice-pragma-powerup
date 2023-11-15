@@ -12,8 +12,7 @@ public class PersonRequestDto {
     private String phone;
     private String address;
     private String idDniType;
-    private String dniNumber;
-    private String idPersonType;
+    private Long dniNumber;
     private String password;
     private String birthDate;
 }

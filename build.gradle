@@ -35,6 +35,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:3.0.4'
 	testImplementation 'org.springframework.security:spring-security-test:6.0.2'
 	implementation 'com.nimbusds:nimbus-jose-jwt:9.30.2'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+	testImplementation 'org.mockito:mockito-core:5.3.1'
 }
 
 tasks.named('test') {

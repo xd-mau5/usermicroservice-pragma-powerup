@@ -8,12 +8,11 @@ public class Person {
     private String phone;
     private String address;
     private String idDniType;
-    private String dniNumber;
-    private String idPersonType;
+    private Long dniNumber;
     private String password;
     private String birthDate;
 
-    public Person(Long id, String name, String surname, String mail, String phone, String address, String idDniType, String dniNumber, String idPersonType, String password, String birthDate) {
+    public Person(Long id, String name, String surname, String mail, String phone, String address, String idDniType, Long dniNumber, String password, String birthDate) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -22,7 +21,6 @@ public class Person {
         this.address = address;
         this.idDniType = idDniType;
         this.dniNumber = dniNumber;
-        this.idPersonType = idPersonType;
         this.password = password;
         this.birthDate = birthDate;
     }
@@ -83,20 +81,12 @@ public class Person {
         this.idDniType = idDniType;
     }
 
-    public String getDniNumber() {
+    public Long getDniNumber() {
         return dniNumber;
     }
 
-    public void setDniNumber(String dniNumber) {
+    public void setDniNumber(Long dniNumber) {
         this.dniNumber = dniNumber;
-    }
-
-    public String getIdPersonType() {
-        return idPersonType;
-    }
-
-    public void setIdPersonType(String idPersonType) {
-        this.idPersonType = idPersonType;
     }
 
     public String getPassword() {

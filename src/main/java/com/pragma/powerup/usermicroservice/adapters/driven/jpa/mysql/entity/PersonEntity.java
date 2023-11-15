@@ -21,17 +21,22 @@ public class PersonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String surname;
+    @Column(nullable = false)
     private String birthDate;
+    @Column(unique = true, nullable = false)
     private String mail;
     @Column(unique = true, nullable = false, length = 13)
     private String phone;
     private String address;
+    @Column(nullable = false)
     private String idDniType;
     @Column(unique = true, nullable = false, length = 20)
-    private String dniNumber;
-    private String idPersonType;
+    private Long dniNumber;
+    @Column(nullable = false)
     private String password;
     private String tokenPassword;
 }

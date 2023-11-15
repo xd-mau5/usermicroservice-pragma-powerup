@@ -12,6 +12,5 @@ public class PersonResponseDto {
     private String phone;
     private String address;
     private String idDniType;
-    private String dniNumber;
-    private String idPersonType;
+    private Long dniNumber;
 }

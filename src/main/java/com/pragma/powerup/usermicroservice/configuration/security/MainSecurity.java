@@ -19,18 +19,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class MainSecurity {
-
     @Autowired
     UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    JwtEntryPoint jwtEntryPoint;
 
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
         return new JwtTokenFilter();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -43,11 +38,13 @@ public class MainSecurity {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtEntryPoint jwtEntryPoint) throws Exception {
         http.cors().and().csrf().disable()
-                .authorizeRequests(requests -> requests
+                .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/auth/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health", "/person/").permitAll()
-                        .requestMatchers("/user").hasRole("ADMIN")
+                        .requestMatchers("/user/owner/**").hasRole("ADMIN")
+                        .requestMatchers("/user/employee/**").hasRole("OWNER")
+                        .requestMatchers("/user/client/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin().disable()

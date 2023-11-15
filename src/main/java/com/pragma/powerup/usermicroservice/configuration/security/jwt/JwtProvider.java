@@ -5,11 +5,8 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.entity.PrincipalUser;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.response.JwtResponseDto;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +18,12 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static com.pragma.powerup.usermicroservice.configuration.Constants.ROLE;
 
 @Component
 public class JwtProvider {
-    private final static Logger logger = LoggerFactory.getLogger(JwtProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
     @Value("${jwt.secret}")
     private String secret;
@@ -35,23 +33,24 @@ public class JwtProvider {
 
     public String generateToken(Authentication authentication) {
         PrincipalUser usuarioPrincipal = (PrincipalUser) authentication.getPrincipal();
-        List<String> roles = usuarioPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        List<String> roles = usuarioPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
         return Jwts.builder()
-                .setSubject(usuarioPrincipal.getUsername())
-                .claim("roles", roles)
+                .setSubject(usuarioPrincipal.getEmail())
+                .claim(ROLE, roles)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + expiration * 180))
-                .signWith(SignatureAlgorithm.HS256, secret.getBytes())
+                .setExpiration(new Date(new Date().getTime() + expiration * 180L))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
 
-    public String getNombreUsuarioFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody().getSubject();
+    public String getUserFromToken(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(secret.getBytes()).build().parseClaimsJws(token).getBody();
+        return claims.getSubject();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secret.getBytes())).build().parseClaimsJws(token);
             return true;
         } catch (MalformedJwtException e) {
             logger.error("token mal formado");
@@ -69,20 +68,19 @@ public class JwtProvider {
 
     public String refreshToken(JwtResponseDto jwtResponseDto) throws ParseException {
         try {
-            Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(jwtResponseDto.getToken());
+            Jwts.parserBuilder().setSigningKey(secret.getBytes()).build().parseClaimsJws(jwtResponseDto.getToken());
         } catch (ExpiredJwtException e) {
             JWT jwt = JWTParser.parse(jwtResponseDto.getToken());
             JWTClaimsSet claims = jwt.getJWTClaimsSet();
             String nombreUsuario = claims.getSubject();
-            List<String> roles = claims.getStringListClaim("roles");
-            //List<String> roles = (List<String>) claims.getClaim("roles");
+            List<String> roles = claims.getStringListClaim(ROLE);
 
             return Jwts.builder()
                     .setSubject(nombreUsuario)
-                    .claim("roles", roles)
+                    .claim(ROLE, roles)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(new Date().getTime() + expiration))
-                    .signWith(SignatureAlgorithm.HS256, secret.getBytes())
+                    .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                     .compact();
         }
         return null;

@@ -8,6 +8,8 @@ public interface IUserServicePort {
     void saveUser(User user);
     void deleteUser(User user);
     void saveOwner(User user);
+    void saveEmployee(User user);
+    void saveClient(User user);
     List<User> getAllProviders(int page);
     User getProvider(Long id);
     User getEmployee(Long id);
